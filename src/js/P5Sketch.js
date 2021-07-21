@@ -15,12 +15,53 @@ const P5Sketch = () => {
 
         p.canvasHeight = window.innerHeight;
 
+        p.sqaureSize = 0;
+
+        p.pattern = [
+            127, 127, 127, 127, 127, 127, 127,
+            127, 255, 190, 255, 190, 255, 127,
+            127, 127,  63,   0,  63, 127, 127,
+            127, 127,   0,  31,   0, 127, 127,
+            127, 127,  63,   0,  63, 127, 127,
+            127, 255, 190, 255, 190, 255, 127,
+            127, 127, 127, 127, 127, 127, 127,
+        ];
+
         p.setup = () => {
             p.canvas = p.createCanvas(p.canvasWidth, p.canvasHeight);
+            p.sqaureSize = p.width / 40; 
+            p.noLoop();
         };
 
         p.draw = () => {
             p.background(0);
+            const patternSize = (p.sqaureSize * 7),
+            xMod = p.width % patternSize, 
+            yMod = p.height % patternSize,
+            xRepeats = p.width - xMod / patternSize,
+            yRepeats = p.height - yMod / patternSize;
+            const initialXTranslate = (p.width % (p.sqaureSize * )) / 2;
+            console.log(p.width % (p.sqaureSize * 7));
+            const initialYTranslate = (p.height % (p.sqaureSize * )) / 2;
+            p.translate(-initialXTranslate, initialYTranslate);
+            for(let x =0; x < p.width; x = x + (p.sqaureSize * 6)){
+                for(let y =0; y < p.height; y = y + (p.sqaureSize * 6)){
+                    p.translate(x, y);
+                    p.drawPattern();
+                    p.translate(-x, -y);
+                }    
+            }
+        };
+
+        p.drawPattern = () => {
+            let patternIndex = 0;
+            for(let i=0; i< 7;i++){
+                for(let j=0; j< 7;j++){
+                    p.fill(p.pattern[patternIndex]);      
+                    p.rect(i * p.sqaureSize, j * p.sqaureSize, p.sqaureSize, p.sqaureSize);
+                    patternIndex++;
+                }   
+            }
         };
 
         p.updateCanvasDimensions = () => {
