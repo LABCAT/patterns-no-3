@@ -35,15 +35,12 @@ const P5Sketch = () => {
 
         p.draw = () => {
             p.background(0);
-            const patternSize = (p.sqaureSize * 7),
-            xMod = p.width % patternSize, 
-            yMod = p.height % patternSize,
-            xRepeats = p.width - xMod / patternSize,
-            yRepeats = p.height - yMod / patternSize;
-            const initialXTranslate = (p.width % (p.sqaureSize * )) / 2;
-            console.log(p.width % (p.sqaureSize * 7));
-            const initialYTranslate = (p.height % (p.sqaureSize * )) / 2;
-            p.translate(-initialXTranslate, initialYTranslate);
+            const patternSize = (p.sqaureSize * 6),
+                xMod = (p.width - p.sqaureSize) % patternSize, 
+                yMod = (p.height - p.sqaureSize) % patternSize,
+                initialXTranslate = (xMod + p.sqaureSize) / 2 - (p.sqaureSize /2),
+                initialYTranslate = (yMod + p.sqaureSize) / 2 - (p.sqaureSize /2);
+            p.translate(-initialXTranslate, -initialYTranslate);
             for(let x =0; x < p.width; x = x + (p.sqaureSize * 6)){
                 for(let y =0; y < p.height; y = y + (p.sqaureSize * 6)){
                     p.translate(x, y);
