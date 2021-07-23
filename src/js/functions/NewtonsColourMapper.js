@@ -36,7 +36,9 @@ const colourMap = {
 
 //50 is the midi value for D3
 export default function NewtonsColourMapper(midiValue = 50) {
+  const originalMidiValue = midiValue;
   let hexColour = "#FFFFFF";
+
 
   //find a shade
   if (midiValue < 50) {
@@ -45,7 +47,7 @@ export default function NewtonsColourMapper(midiValue = 50) {
     }
     const baseColour = colourMap[midiValue];
     const color = new Values(baseColour);
-    const shadeAmount = Math.ceil((50 - midiValue) / 12) * 20;
+    const shadeAmount = Math.ceil((50 - originalMidiValue) / 12) * 20;
     hexColour = "#" + color.shade(shadeAmount).hex;
   }
   //find a tint
@@ -55,7 +57,8 @@ export default function NewtonsColourMapper(midiValue = 50) {
     }
     const baseColour = colourMap[midiValue];
     const color = new Values(baseColour);
-    const tintAmount = Math.ceil((midiValue - 50) / 12) * 20;
+    const tintAmount = Math.ceil((originalMidiValue - 50) / 12) * 20;
+    console.log(tintAmount);
     hexColour = "#" + color.tint(tintAmount).hex;
   } else {
     hexColour = colourMap[midiValue];
