@@ -5,3 +5,20 @@ body {
   overflow: hidden;
 }
 
+
+#play-icon {
+  position: fixed;
+  top: calc(50% - 60px);
+  left: calc(50% - 60px);
+  width: 120px;
+  height: 120px;
+  fill: #ff5300;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.5516s;
+  cursor: pointer;
+}
+
+#play-icon.fade-in {
+  opacity: 1;
+}

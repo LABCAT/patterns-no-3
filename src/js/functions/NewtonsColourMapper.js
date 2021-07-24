@@ -58,7 +58,6 @@ export default function NewtonsColourMapper(midiValue = 50) {
     const baseColour = colourMap[midiValue];
     const color = new Values(baseColour);
     const tintAmount = Math.ceil((originalMidiValue - 50) / 12) * 20;
-    console.log(tintAmount);
     hexColour = "#" + color.tint(tintAmount).hex;
   } else {
     hexColour = colourMap[midiValue];

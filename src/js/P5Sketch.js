@@ -5,6 +5,7 @@ import * as p5 from "p5";
 import audio from '../audio/patterns-no-3.ogg';
 import cueSet1 from "./cueSet1.js";
 import cueSet2 from "./cueSet2.js";
+import PlayIcon from './PlayIcon.js';
 import NewtonsColourMapper from "./functions/NewtonsColourMapper.js";
 
 const P5Sketch = () => {
@@ -23,13 +24,13 @@ const P5Sketch = () => {
         p.sqaureWidth = 0;
 
         p.pattern = [
-            127, 127, 127, 127, 127, 127, 127, 127,
-            127, 255, 190, 190, 255, 190, 255, 127, 
-            127, 127,  63,   0,   0,  63, 127, 127,
-            127, 127,   0,  31,  31,   0, 127, 127,
-            127, 127,  63,   0,   0,  63, 127, 127,
-            127, 255, 190, 190, 255, 190, 255, 127,
-            127, 127, 127, 127, 127, 127, 127, 127,
+            255, 223, 223, 223, 223, 223, 223, 255,
+            223, 127, 127, 190, 190, 127, 127, 223, 
+            223, 190,  79,  79,  79,  79, 190, 223,
+            223, 190,  47,   0,   0,  47, 190, 223,
+            223, 190,  79,  79,  79,  79, 190, 223,
+            223, 127, 127, 190, 190, 127, 127, 223,
+            255, 223, 223, 223, 223, 223, 223, 255,
         ];
 
         p.cueSet1Completed = [];
@@ -37,15 +38,20 @@ const P5Sketch = () => {
         p.cueSet2Completed = [];
 
         p.preload = () => {
-            p.song = p.loadSound(audio);
+            p.song = p.loadSound(
+                audio,
+                document.getElementById("play-icon").classList.add("fade-in")    
+            );
         }
 
         p.setup = () => {
             p.canvas = p.createCanvas(p.canvasWidth, p.canvasHeight);
-            p.rectMode(p.CENTER);
             p.sqaureHeight = p.height / 39; 
             p.sqaureWidth = p.width / 64; 
+            p.rectMode(p.CENTER);
             p.noLoop();
+            p.background(0);
+            p.stroke(255);
             
             for (let i = 0; i < cueSet1.length; i++) {
               let vars = {
@@ -68,10 +74,6 @@ const P5Sketch = () => {
             }
         }
 
-        p.heightAdjuster = 0;
-
-        p.heightAdjuster2 = 0;
-
         p.executeCueSet1 = (vars) => {
             const { currentCue, midi } = vars;
             if (!p.cueSet1Completed.includes(currentCue)) {
@@ -79,15 +81,27 @@ const P5Sketch = () => {
                 const modulo = currentCue % 64 > 0 ? currentCue % 64 : 64,
                     x1 = (modulo - 1) * p.sqaureWidth,
                     x2 = (64 - modulo) * p.sqaureWidth,
-                    y1 = Math.floor(p.map(midi, 50, 86, 36, 0)),
-                    y2 =  Math.floor(p.map(midi, 50, 86, 0, 36)),
-                    colour = NewtonsColourMapper(midi);
-                p.fill(colour);
-                if(modulo === 1 && currentCue > 1){
-                    //p.heightAdjuster++;
+                    colour1 = NewtonsColourMapper(currentCue > 64 ? midi - 12 : midi),
+                    colour2 = NewtonsColourMapper(midi - 48),
+                    colour3 = NewtonsColourMapper(currentCue > 64 ? midi : midi - 24),
+                    y1 = Math.floor(p.map(midi, 50, 86, 6, 30)) * p.sqaureHeight,
+                    y2 =  Math.floor(p.map(midi, 50, 86, 30, 6)) * p.sqaureHeight,
+                    circleDivisor = currentCue > 64 ? 3 : 2;
+                p.fill(colour1);
+                p.rect(x1, y1, p.sqaureWidth, p.sqaureHeight);
+                p.rect(x2, y2, p.sqaureWidth, p.sqaureHeight);
+                p.noStroke();
+                if(currentCue > 128){
+                    p.stroke(255);
                 }
-                p.rect(x1, y1 * p.sqaureHeight - (p.sqaureHeight * p.heightAdjuster), p.sqaureWidth, p.sqaureHeight);
-                p.rect(x2, y2 * p.sqaureHeight + (p.sqaureHeight * p.heightAdjuster), p.sqaureWidth, p.sqaureHeight);
+                p.fill(colour2);
+                p.quad(x1 - p.sqaureWidth / 2, y1, x1, y1 - p.sqaureHeight / 2, x1 + p.sqaureWidth / 2, y1, x1, y1 + p.sqaureHeight / 2)
+                p.quad(x2 - p.sqaureWidth / 2, y2, x2, y2 - p.sqaureHeight / 2, x2 + p.sqaureWidth / 2, y2, x2, y2 + p.sqaureHeight / 2)
+                if(currentCue > 64){
+                    p.fill(colour3);
+                    p.ellipse(x1, y1, p.sqaureWidth / circleDivisor, p.sqaureHeight / circleDivisor);
+                    p.ellipse(x2, y2, p.sqaureWidth / circleDivisor, p.sqaureHeight / circleDivisor);
+                }
             }
         };
 
@@ -97,37 +111,31 @@ const P5Sketch = () => {
                 const modulo = currentCue % 64 > 0 ? currentCue % 64 : 64,
                     x1 = (modulo - 1) * p.sqaureWidth,
                     x2 = (64 - modulo) * p.sqaureWidth,
-                    colour = NewtonsColourMapper(midi),
-                    colour2 = NewtonsColourMapper(midi + 12);
-                let y1 = Math.floor(p.map(midi, 50, 86, 36, 0)),
-                    y2 =  Math.floor(p.map(midi, 50, 86, 0, 36));
-                p.fill(colour);
-                if(modulo === 1 && currentCue > 1){
-                   // p.heightAdjuster2++;
-                }
-               
-                //p.ellipse(x1, y1 * p.sqaureHeight - (p.sqaureHeight * p.heightAdjuster2), p.sqaureWidth, p.sqaureHeight);
-                //p.ellipse(x2, y2 * p.sqaureHeight + (p.sqaureHeight * p.heightAdjuster2), p.sqaureWidth, p.sqaureHeight);
+                    colour1 = NewtonsColourMapper(midi),
+                    colour2 = NewtonsColourMapper(midi + 24), 
+                    colour3 = NewtonsColourMapper(midi + 12), 
+                    y1 = Math.floor(p.map(midi, 50, 86, 24, 0)) * p.sqaureHeight,
+                    y2 =  Math.floor(p.map(midi, 50, 86, 12, 36)) * p.sqaureHeight,
+                    quadXAdjustor = currentCue > 64 ? p.sqaureWidth / 4 : p.sqaureWidth / 2,
+                    quadYAdjustor = currentCue > 64 ? p.sqaureHeight / 4 : p.sqaureHeight / 2;
                 
+                p.fill(colour1);
+                p.rect(x1, y1, p.sqaureWidth, p.sqaureHeight);
+                p.rect(x2, y2, p.sqaureWidth, p.sqaureHeight);
                 p.noStroke();
-                p.fill(colour);
-                p.rect(x1, y1 * p.sqaureHeight - (p.sqaureHeight * p.heightAdjuster), p.sqaureWidth, p.sqaureHeight);
-                p.rect(x2, y2 * p.sqaureHeight + (p.sqaureHeight * p.heightAdjuster), p.sqaureWidth, p.sqaureHeight);
-                y1 = y1 * p.sqaureHeight;
-                y2 = y2 * p.sqaureHeight;
+                if(currentCue > 64){
+                    p.stroke(0);
+                    p.fill(colour3);
+                    p.quad(x1 - quadXAdjustor * 2, y1, x1, y1 - quadYAdjustor * 2, x1 + quadXAdjustor * 2, y1, x1, y1 + quadYAdjustor * 2)
+                    p.quad(x2 - quadXAdjustor * 2, y2, x2, y2 - quadYAdjustor * 2, x2 + quadXAdjustor * 2, y2, x2, y2 + quadYAdjustor * 2)
+                }
                 p.fill(colour2);
-                p.quad(x1 - p.sqaureWidth / 2, y1, x1, y1 - p.sqaureHeight / 2, x1 + p.sqaureWidth / 2, y1, x1, y1 + p.sqaureHeight / 2)
-                p.quad(x2 - p.sqaureWidth / 2, y2, x2, y2 - p.sqaureHeight / 2, x2 + p.sqaureWidth / 2, y2, x2, y2 + p.sqaureHeight / 2)
+                p.quad(x1 - quadXAdjustor, y1, x1, y1 - quadYAdjustor, x1 + quadXAdjustor, y1, x1, y1 + quadYAdjustor)
+                //p.quad(x2 - quadXAdjustor, y2, x2, y2 - quadYAdjustor, x2 + quadXAdjustor, y2, x2, y2 + quadYAdjustor)
             }
         };
 
         p.draw = () => {
-            p.background(0);
-            // const patternSize = (p.sqaureSize * 6),
-            //     xMod = (p.width - p.sqaureSize) % patternSize, 
-            //     yMod = (p.height - p.sqaureSize) % patternSize,
-            //     initialXTranslate = (xMod + p.sqaureSize) / 2 - (p.sqaureSize /2),
-            //     initialYTranslate = (yMod + p.sqaureSize) / 2 - (p.sqaureSize /2);
             p.translate(p.sqaureWidth / 2, p.sqaureHeight + p.sqaureHeight / 2);
             for(let x =0; x < p.width; x = x + (p.sqaureWidth * 8)){
                 let y =0
@@ -144,8 +152,14 @@ const P5Sketch = () => {
             let patternIndex = 0;
             for(let j=0; j< 7;j++){
                 for(let i=0; i< 8;i++){
+                    const x = i * p.sqaureWidth,
+                        y = j * p.sqaureHeight,
+                        quadYAdjustor = p.sqaureHeight / 2,
+                        quadXAdjustor = p.sqaureWidth / 2;
+                    
+                    p.noStroke();
                     p.fill(p.pattern[patternIndex]);      
-                    p.rect(i * p.sqaureWidth, j * p.sqaureHeight, p.sqaureWidth, p.sqaureHeight);
+                    p.quad(x - quadXAdjustor, y, x, y - quadYAdjustor, x + quadXAdjustor, y, x, y + quadYAdjustor)
                     patternIndex++;
                 }   
             }
@@ -157,7 +171,7 @@ const P5Sketch = () => {
             } else {
                 if (parseInt(p.song.currentTime()) >= parseInt(p.song.buffer.duration)) {
                 }
-                p.canvas.removeClass('fade-out');
+                document.getElementById("play-icon").classList.remove("fade-in");
                 p.song.play();
             }
         };
@@ -211,6 +225,7 @@ const P5Sketch = () => {
 
     return (
         <div ref={sketchRef}>
+            <PlayIcon />
         </div>
     );
 };
