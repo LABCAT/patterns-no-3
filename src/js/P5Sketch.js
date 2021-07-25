@@ -46,8 +46,9 @@ const P5Sketch = () => {
 
         p.setup = () => {
             p.canvas = p.createCanvas(p.canvasWidth, p.canvasHeight);
-            p.sqaureHeight = p.height / 39; 
+            p.sqaureHeight = p.height / 49; 
             p.sqaureWidth = p.width / 64; 
+            p.angleMode(p.DEGREES);
             p.rectMode(p.CENTER);
             p.noLoop();
             p.background(0);
@@ -73,73 +74,125 @@ const P5Sketch = () => {
               p.song.addCue(cueSet2[i].time, p.executeCueSet2, vars);
             }
         }
+        
+        p.startX = 0;
+
+        p.startY = 0;
 
         p.executeCueSet1 = (vars) => {
             const { currentCue, midi } = vars;
             if (!p.cueSet1Completed.includes(currentCue)) {
                 p.cueSet1Completed.push(currentCue);
-                const modulo = currentCue % 64 > 0 ? currentCue % 64 : 64,
+                let modulo = currentCue % 64 > 0 ? currentCue % 64 : 64,
                     x1 = (modulo - 1) * p.sqaureWidth,
                     x2 = (64 - modulo) * p.sqaureWidth,
                     colour1 = NewtonsColourMapper(currentCue > 64 ? midi - 12 : midi),
                     colour2 = NewtonsColourMapper(midi - 48),
                     colour3 = NewtonsColourMapper(currentCue > 64 ? midi : midi - 24),
-                    y1 = Math.floor(p.map(midi, 50, 86, 6, 30)) * p.sqaureHeight,
-                    y2 =  Math.floor(p.map(midi, 50, 86, 30, 6)) * p.sqaureHeight,
+                    y1 = Math.floor(p.map(midi, 50, 74, 36, 12)) * p.sqaureHeight,
+                    y2 =  Math.floor(p.map(midi, 50, 74, 0, 24)) * p.sqaureHeight,
                     circleDivisor = currentCue > 64 ? 3 : 2;
+                
+                x1 = p.startX * (p.sqaureWidth * 8) + (p.sqaureWidth * 3.5); 
+                y1 = p.startY * (p.sqaureHeight * 6) + p.sqaureHeight + (p.sqaureHeight * 2); 
+                p.push();
                 p.fill(colour1);
-                p.rect(x1, y1, p.sqaureWidth, p.sqaureHeight);
-                p.rect(x2, y2, p.sqaureWidth, p.sqaureHeight);
                 p.noStroke();
+                p.quad(x1 - p.sqaureWidth * 2, y1, x1, y1 - p.sqaureHeight * 2, x1 + p.sqaureWidth * 2, y1, x1, y1 + p.sqaureHeight * 2);
                 if(currentCue > 128){
                     p.stroke(255);
                 }
                 p.fill(colour2);
-                p.quad(x1 - p.sqaureWidth / 2, y1, x1, y1 - p.sqaureHeight / 2, x1 + p.sqaureWidth / 2, y1, x1, y1 + p.sqaureHeight / 2)
-                p.quad(x2 - p.sqaureWidth / 2, y2, x2, y2 - p.sqaureHeight / 2, x2 + p.sqaureWidth / 2, y2, x2, y2 + p.sqaureHeight / 2)
+                p.rect(x1, y1, p.sqaureWidth * 2, p.sqaureHeight * 2);
+                //p.quad(x2 - p.sqaureWidth / 2, y2, x2, y2 - p.sqaureHeight / 2, x2 + p.sqaureWidth / 2, y2, x2, y2 + p.sqaureHeight / 2)
                 if(currentCue > 64){
+                    p.fill(colour1);
+                    p.quad(x1 - p.sqaureWidth / 2, y1, x1, y1 - p.sqaureHeight / 2, x1 + p.sqaureWidth / 2, y1, x1, y1 + p.sqaureHeight / 2)
                     p.fill(colour3);
                     p.ellipse(x1, y1, p.sqaureWidth / circleDivisor, p.sqaureHeight / circleDivisor);
-                    p.ellipse(x2, y2, p.sqaureWidth / circleDivisor, p.sqaureHeight / circleDivisor);
+                    //p.ellipse(x2, y2, p.sqaureWidth / circleDivisor, p.sqaureHeight / circleDivisor);
+                }
+                p.pop();
+
+                p.startX++;
+                if(p.startX === 8){
+                    p.startX = 0;
+                    p.startY++;
+                    if(p.startY === 8){
+                        p.startY = 0;
+                    }
                 }
             }
         };
 
+        p.startX2 = 0;
+
+        p.startY2 = 0;
+
         p.executeCueSet2 = (vars) => {
             const { currentCue, midi } = vars;
             if (!p.cueSet2Completed.includes(currentCue)) {
-                const modulo = currentCue % 64 > 0 ? currentCue % 64 : 64,
+                p.cueSet2Completed.push(currentCue);
+                let modulo = currentCue % 64 > 0 ? currentCue % 64 : 64,
                     x1 = (modulo - 1) * p.sqaureWidth,
                     x2 = (64 - modulo) * p.sqaureWidth,
                     colour1 = NewtonsColourMapper(midi),
                     colour2 = NewtonsColourMapper(midi + 24), 
                     colour3 = NewtonsColourMapper(midi + 12), 
-                    y1 = Math.floor(p.map(midi, 50, 86, 24, 0)) * p.sqaureHeight,
-                    y2 =  Math.floor(p.map(midi, 50, 86, 12, 36)) * p.sqaureHeight,
-                    quadXAdjustor = currentCue > 64 ? p.sqaureWidth / 4 : p.sqaureWidth / 2,
-                    quadYAdjustor = currentCue > 64 ? p.sqaureHeight / 4 : p.sqaureHeight / 2;
+                    y1 = Math.floor(p.map(midi, 62, 86, 24, 0)) * p.sqaureHeight,
+                    y2 =  Math.floor(p.map(midi, 62, 86, 12, 36)) * p.sqaureHeight,
+                    quadXAdjustor = currentCue > 64 ? p.sqaureWidth / 4 : p.sqaureWidth,
+                    quadYAdjustor = currentCue > 64 ? p.sqaureHeight / 4 : p.sqaureHeight,
+                    x3 = 0, x4 = 0, y3 = 0, y4 = 0;
+
+                
+                x1 = p.startX2 * (p.sqaureWidth * 8) + (p.sqaureWidth * 2); 
+                y1 = p.startY2 * (p.sqaureHeight * 6) + (p.sqaureHeight * 1.5); 
+                x2 = p.startX2 * (p.sqaureWidth * 8) + (p.sqaureWidth * 2); 
+                y2 = p.startY2 * (p.sqaureHeight * 6) + (p.sqaureHeight * 4.5); 
+                x3 = p.startX2 * (p.sqaureWidth * 8) + (p.sqaureWidth * 5); 
+                y3 = p.startY2 * (p.sqaureHeight * 6) + (p.sqaureHeight * 1.5); 
+                x4 = p.startX2 * (p.sqaureWidth * 8) + (p.sqaureWidth * 5); 
+                y4 = p.startY2 * (p.sqaureHeight * 6) + (p.sqaureHeight * 4.5); 
                 
                 p.fill(colour1);
-                p.rect(x1, y1, p.sqaureWidth, p.sqaureHeight);
-                p.rect(x2, y2, p.sqaureWidth, p.sqaureHeight);
+                // p.rect(x1, y1, p.sqaureWidth, p.sqaureHeight);
+                // p.rect(x2, y2, p.sqaureWidth, p.sqaureHeight);
+                // p.rect(x3, y3, p.sqaureWidth, p.sqaureHeight);
+                // p.rect(x4, y4, p.sqaureWidth, p.sqaureHeight);
+                //p.rect(x2, y2, p.sqaureWidth, p.sqaureHeight);
                 p.noStroke();
                 if(currentCue > 64){
                     p.stroke(0);
                     p.fill(colour3);
                     p.quad(x1 - quadXAdjustor * 2, y1, x1, y1 - quadYAdjustor * 2, x1 + quadXAdjustor * 2, y1, x1, y1 + quadYAdjustor * 2)
                     p.quad(x2 - quadXAdjustor * 2, y2, x2, y2 - quadYAdjustor * 2, x2 + quadXAdjustor * 2, y2, x2, y2 + quadYAdjustor * 2)
+                    p.quad(x3 - quadXAdjustor * 2, y3, x3, y3 - quadYAdjustor * 2, x3 + quadXAdjustor * 2, y3, x3, y3 + quadYAdjustor * 2)
+                    p.quad(x4 - quadXAdjustor * 2, y4, x4, y4 - quadYAdjustor * 2, x4 + quadXAdjustor * 2, y4, x4, y4 + quadYAdjustor * 2)
                 }
-                p.fill(colour2);
+                p.fill(currentCue > 64 ? colour2 : colour1);
                 p.quad(x1 - quadXAdjustor, y1, x1, y1 - quadYAdjustor, x1 + quadXAdjustor, y1, x1, y1 + quadYAdjustor)
-                //p.quad(x2 - quadXAdjustor, y2, x2, y2 - quadYAdjustor, x2 + quadXAdjustor, y2, x2, y2 + quadYAdjustor)
+                p.quad(x2 - quadXAdjustor, y2, x2, y2 - quadYAdjustor, x2 + quadXAdjustor, y2, x2, y2 + quadYAdjustor)
+                p.quad(x3 - quadXAdjustor, y3, x3, y3 - quadYAdjustor, x3 + quadXAdjustor, y3, x3, y3 + quadYAdjustor)
+                p.quad(x4 - quadXAdjustor, y4, x4, y4 - quadYAdjustor, x4 + quadXAdjustor, y4, x4, y4 + quadYAdjustor)
+               //p.quad(x2 - quadXAdjustor, y2, x2, y2 - quadYAdjustor, x2 + quadXAdjustor, y2, x2, y2 + quadYAdjustor)
+
+                p.startX2++;
+                if(p.startX2 === 8){
+                    p.startX2 = 0;
+                    p.startY2++;
+                    if(p.startY2 === 8){
+                        p.startY2 = 0;
+                    }
+                }
             }
         };
 
         p.draw = () => {
-            p.translate(p.sqaureWidth / 2, p.sqaureHeight + p.sqaureHeight / 2);
+            p.translate(p.sqaureWidth / 2, p.sqaureHeight / 2);
             for(let x =0; x < p.width; x = x + (p.sqaureWidth * 8)){
                 let y =0
-                for(let i =0; i < 6; i++){
+                for(let i =0; i < 8; i++){
                     p.translate(x, y);
                     p.drawPattern();
                     p.translate(-x, -y);
@@ -155,10 +208,12 @@ const P5Sketch = () => {
                     const x = i * p.sqaureWidth,
                         y = j * p.sqaureHeight,
                         quadYAdjustor = p.sqaureHeight / 2,
-                        quadXAdjustor = p.sqaureWidth / 2;
+                        quadXAdjustor = p.sqaureWidth / 2,
+                        fillColour = p.pattern[patternIndex],
+                        inverseFillColour = p.map(fillColour, 0, 255, 255, 0);
                     
                     p.noStroke();
-                    p.fill(p.pattern[patternIndex]);      
+                    p.fill(fillColour);      
                     p.quad(x - quadXAdjustor, y, x, y - quadYAdjustor, x + quadXAdjustor, y, x, y + quadYAdjustor)
                     patternIndex++;
                 }   
