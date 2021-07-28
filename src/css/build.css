@@ -5,7 +5,6 @@ body {
   overflow: hidden;
 }
 
-
 #play-icon {
   position: fixed;
   top: calc(50% - 60px);
@@ -13,7 +12,7 @@ body {
   width: 120px;
   height: 120px;
   fill: #ff5300;
-  z-index: 1;
+  z-index: 2;
   opacity: 0;
   transition: opacity 0.5516s;
   cursor: pointer;
@@ -21,4 +20,20 @@ body {
 
 #play-icon.fade-in {
   opacity: 1;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: black;
+  z-index: 1;
+  opacity: 1;
+  transition: opacity 0.5516s;
+}
+
+#overlay.fade-out {
+  opacity: 0;
 }

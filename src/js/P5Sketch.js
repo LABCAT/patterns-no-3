@@ -40,7 +40,10 @@ const P5Sketch = () => {
         p.preload = () => {
             p.song = p.loadSound(
                 audio,
-                document.getElementById("play-icon").classList.add("fade-in")    
+                function() {
+                    document.getElementById("play-icon").classList.add("fade-in")    
+                    document.getElementById("overlay").classList.add("fade-out")    
+                }
             );
         }
 

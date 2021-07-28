@@ -2,7 +2,10 @@ import P5Sketch from './P5Sketch'
 
 function App() {
   return (
-    <P5Sketch/>
+    <>
+      <div id="overlay"></div>
+      <P5Sketch/>
+    </>
   );
 }
 
