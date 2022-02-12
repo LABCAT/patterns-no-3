@@ -1,0 +1,2 @@
+body{margin:0;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow:hidden}#play-icon{position:fixed;top:calc(50% - 60px);left:calc(50% - 60px);width:120px;height:120px;fill:#ff5300;z-index:2;opacity:0;transition:opacity .5516s;cursor:pointer}#overlay,#play-icon.fade-in{opacity:1}#overlay{position:fixed;top:0;right:0;bottom:0;left:0;background-color:#000;z-index:1;transition:opacity .5516s}#overlay.fade-out{opacity:0}
+/*# sourceMappingURL=main.dd2ff462.chunk.css.map */
